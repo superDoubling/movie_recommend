@@ -20,6 +20,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.yh.movie.recommend.dao.MovieDao;
+import com.yh.movie.recommend.util.CsvUtil;
 import com.yh.movie.recommend.util.MathUtil;
 import com.yh.movie.recommend.util.TestMovieListThread;
 
@@ -325,6 +326,50 @@ public class MovieService {
 
 	public void userLogin(String uname) {
 		this.movieDao.userLogin(uname);
+	}
+
+	public List<Map<String, Object>> getRecommendList(String uname, String[] likeList,
+			String[] unknownList, String[] dislikeList) {
+		List<String> midList = new ArrayList<String>();
+		for (String likeMid : likeList) {
+			likeMid = likeMid.replaceAll("\\[", "").replaceAll("\\]", "");
+			if(!likeMid.equals("")){
+				this.movieDao.judgeMovie(uname, likeMid, this.movieDao.getNameByMid(likeMid), 5);
+			}
+		}
+		for (String unknownMid : unknownList) {
+			unknownMid = unknownMid.replaceAll("\\[", "").replaceAll("\\]", "");
+			if(!unknownMid.equals("")){
+				this.movieDao.judgeMovie(uname, unknownMid, this.movieDao.getNameByMid(unknownMid), 3);
+			}
+		}
+		for (String dislikeMid : dislikeList) {
+			dislikeMid = dislikeMid.replaceAll("\\[", "").replaceAll("\\]", "");
+			if(!dislikeMid.equals("")){
+				this.movieDao.judgeMovie(uname, dislikeMid, this.movieDao.getNameByMid(dislikeMid), 1);
+			}
+		}
+		List<Map<String, Object>> briefList = this.movieDao.getBriefList();
+		String csvFilePath = CsvUtil.writeCSV(briefList); //全部导出需要5s多
+		System.out.println(CsvUtil.unameToUidMap.size());
+		try {
+			CsvUtil.calculateUserCF(csvFilePath, uname, midList);
+			CsvUtil.calculateItemCF(csvFilePath, uname, midList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		List<Map<String, Object>> list = this.movieDao.getRecommentMovieList(midList);
+		for (Map<String, Object> map : list) {
+			String type = map.get("type").toString();
+			List<String> types = Arrays.asList(type.replaceAll(" ", "").split(
+					","));
+			if (types.size() > 4) {
+				types = types.subList(0, 4);
+			}
+			map.put("type", types);
+		}
+		return list;
 	}
 
 	

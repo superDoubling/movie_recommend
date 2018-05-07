@@ -293,8 +293,9 @@ public class MovieController {
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("code", 100);
-		result.put("msg", "查询成功");
-		//result.put("subjects", this.movieService.getRecommendList(uname));
+		result.put("msg", "推荐成功");
+		result.put("isOld", 2);
+		result.put("subjects", this.movieService.getRecommendList(uname, likeList, unknownList, dislikeList));
 		return jsonEntity(result);
 	}
 	

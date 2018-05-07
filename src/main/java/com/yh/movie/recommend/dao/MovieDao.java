@@ -274,5 +274,20 @@ public class MovieDao {
 		
 	}
 
+	public String getNameByMid(String mid) {
+		String sql = "select name from movie where mid = ?";
+		return this.jdbcTemplate.queryForMap(sql, mid).get("name").toString();
+	}
+
+	public List<Map<String, Object>> getBriefList() {
+		String sql = "select uname, mid, score from brief";
+		return this.jdbcTemplate.queryForList(sql);
+	}
+	
+	public List<Map<String, Object>> getRecommentMovieList(List<String> midList) {
+		String str = midList.toString().replaceAll("\\[", "(").replaceAll("\\]", ")");
+		String sql = "select * from movie where mid in " + str ;
+		return this.jdbcTemplate.queryForList(sql);
+	}
 	
 }
