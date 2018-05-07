@@ -238,10 +238,12 @@ public class MovieDao {
 	}
 
 	public void clearMemory(String uname) {
-		String clearStoreStr = "update user set store = ? where uname = ?";
+		String clearStoreStr = "update user set isOld = ?, store = ? where uname = ?";
 		String clearHistoryStr = "delete from history where uname = ?";
-		this.jdbcTemplate.update(clearStoreStr, "", uname);
+		String clearBriefStr =  "delete from brief where uname = ?";
+		this.jdbcTemplate.update(clearStoreStr, 0, "", uname);
 		this.jdbcTemplate.update(clearHistoryStr, uname);
+		this.jdbcTemplate.update(clearBriefStr, uname);
 	}
 
 	public Map<String, Object> getUserInfo(String uname) {
@@ -288,6 +290,11 @@ public class MovieDao {
 		String str = midList.toString().replaceAll("\\[", "(").replaceAll("\\]", ")");
 		String sql = "select * from movie where mid in " + str ;
 		return this.jdbcTemplate.queryForList(sql);
+	}
+
+	public void setIsOld(String uname, int isOld) {
+		String sql = "update user set isOld = ? where uname = ?";
+		this.jdbcTemplate.update(sql, isOld, uname);
 	}
 	
 }

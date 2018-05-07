@@ -330,8 +330,8 @@ public class MovieService {
 
 	public List<Map<String, Object>> getRecommendList(String uname, String[] likeList,
 			String[] unknownList, String[] dislikeList) {
-		List<String> midList = new ArrayList<String>();
-		for (String likeMid : likeList) {
+		List<String> midList = new ArrayList<String>(); //推荐电影的mid
+		for (String likeMid : likeList) { //把step2的反馈加入brief中
 			likeMid = likeMid.replaceAll("\\[", "").replaceAll("\\]", "");
 			if(!likeMid.equals("")){
 				this.movieDao.judgeMovie(uname, likeMid, this.movieDao.getNameByMid(likeMid), 5);
@@ -349,6 +349,33 @@ public class MovieService {
 				this.movieDao.judgeMovie(uname, dislikeMid, this.movieDao.getNameByMid(dislikeMid), 1);
 			}
 		}
+		//导出csv文件，用mahout训练
+		List<Map<String, Object>> briefList = this.movieDao.getBriefList();
+		String csvFilePath = CsvUtil.writeCSV(briefList); //全部导出需要5s多
+		System.out.println(CsvUtil.unameToUidMap.size());
+		try {
+			CsvUtil.calculateUserCF(csvFilePath, uname, midList);
+			CsvUtil.calculateItemCF(csvFilePath, uname, midList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		List<Map<String, Object>> list = this.movieDao.getRecommentMovieList(midList);
+		for (Map<String, Object> map : list) {
+			String type = map.get("type").toString();
+			List<String> types = Arrays.asList(type.replaceAll(" ", "").split(
+					","));
+			if (types.size() > 4) {
+				types = types.subList(0, 4);
+			}
+			map.put("type", types);
+		}
+		this.movieDao.setIsOld(uname, 2);
+		return list;
+	}
+
+	public List<Map<String, Object>> recommendToIsOld(String uname) {
+		List<String> midList = new ArrayList<String>(); //推荐电影的mid
 		List<Map<String, Object>> briefList = this.movieDao.getBriefList();
 		String csvFilePath = CsvUtil.writeCSV(briefList); //全部导出需要5s多
 		System.out.println(CsvUtil.unameToUidMap.size());

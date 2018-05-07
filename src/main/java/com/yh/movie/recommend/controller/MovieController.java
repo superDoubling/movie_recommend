@@ -286,7 +286,6 @@ public class MovieController {
 	}
 	
 	
-	//TODO
 	@RequestMapping(value = "getRecommendList.do")
 	public ResponseEntity<String> getRecommendList(String[] likeList, String[] unknownList, String[] dislikeList, String uname){
 		System.out.println("getRecommendList");
@@ -296,6 +295,17 @@ public class MovieController {
 		result.put("msg", "推荐成功");
 		result.put("isOld", 2);
 		result.put("subjects", this.movieService.getRecommendList(uname, likeList, unknownList, dislikeList));
+		return jsonEntity(result);
+	}
+	
+	@RequestMapping(value = "recommendToIsOld.do")
+	public ResponseEntity<String> recommendToIsOld(String uname){
+		System.out.println("recommendToIsOld");
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("code", 100);
+		result.put("msg", "推荐成功");
+		result.put("subjects", this.movieService.recommendToIsOld(uname));
 		return jsonEntity(result);
 	}
 	

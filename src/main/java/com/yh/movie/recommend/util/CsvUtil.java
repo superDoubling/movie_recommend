@@ -22,7 +22,7 @@ import com.csvreader.CsvWriter;
 
 public class CsvUtil {
 
-	public static Map<String, Long> unameToUidMap = new HashMap<String, Long>(); // size:55707
+	public static Map<String, Long> unameToUidMap = new HashMap<String, Long>(); // size:56134
 
 	public static String writeCSV(List<Map<String, Object>> list) {
 		// 定义一个CSV路径
