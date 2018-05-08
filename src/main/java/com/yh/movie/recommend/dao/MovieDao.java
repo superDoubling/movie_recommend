@@ -267,8 +267,8 @@ public class MovieDao {
 	public void userLogin(String uname) {
 		String getSql = "select * from user where uname = ?";
 		String sql = "insert into user (uname, createTimeStamp) values(?,?)";
-		Map<String, Object> map = this.jdbcTemplate.queryForList(getSql, uname).get(0);
-		if (map == null || map.size() == 0){
+		List<Map<String, Object>> list = this.jdbcTemplate.queryForList(getSql, uname);
+		if (list == null || list.size() == 0){
 			this.jdbcTemplate.update(sql, uname, System.currentTimeMillis());
 		} else {
 			System.out.println("用户已存在！");

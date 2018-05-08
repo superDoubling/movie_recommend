@@ -66,7 +66,7 @@ public class CsvUtil {
 				similarity, model);
 		Recommender recommender = new GenericUserBasedRecommender(model,
 				neighborhood, similarity);
-		List<RecommendedItem> recommendations = recommender.recommend(uid, 10);// 为用户推荐两个ItemID
+		List<RecommendedItem> recommendations = recommender.recommend(uid, 15);// 为用户推荐两个ItemID
 		for (RecommendedItem recommendation : recommendations) {
 			System.out.println(recommendation.getItemID() + ": " + recommendation.getValue());
 			midList.add(recommendation.getItemID() + "");
@@ -83,7 +83,7 @@ public class CsvUtil {
 		//itemCF
 		ItemSimilarity similarity = new PearsonCorrelationSimilarity(model);
 		Recommender recommender = new GenericItemBasedRecommender(model,similarity);
-		List<RecommendedItem> recommendations = recommender.recommend(uid, 10);// 为用户推荐10个ItemID
+		List<RecommendedItem> recommendations = recommender.recommend(uid, 15);// 为用户推荐10个ItemID
 		for (RecommendedItem recommendation : recommendations) {
 			System.out.println(recommendation.getItemID() + ": " + recommendation.getValue());
 			midList.add(recommendation.getItemID() + "");
