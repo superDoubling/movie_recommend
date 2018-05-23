@@ -2,6 +2,7 @@ package com.yh.movie.recommend.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.yh.movie.recommend.util.DBHelper;
 import com.yh.movie.recommend.util.JDBCUtil;
+import com.yh.movie.recommend.entity.Brief;
 import com.yh.movie.recommend.entity.Movie;
 
 @Repository
@@ -30,30 +32,90 @@ public class MovieDao {
 		StringBuffer sql = new StringBuffer();
         sql.append("INSERT INTO movie (mid, picUrl,name,director,screenwriter,actor,type,area,language,showTime,runtime,score,people,summary) ")
         .append("VALUE (? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?, ? ) ");
+        StringBuffer searchSql = new StringBuffer("select * from movie where mid = ?");
+        StringBuffer updateSql = new StringBuffer("update movie set score = ?, people = ? where mid = ?");
 		Connection conn=JDBCUtil.getConnection();  
         try {  
-            PreparedStatement stmt=conn.prepareStatement(sql.toString()); 
-            stmt.setString(1, movie.getMid());
-            stmt.setString(2, movie.getPicUrl());
-            stmt.setString(3, movie.getName());
-            stmt.setString(4, movie.getDirector());
-            stmt.setString(5, movie.getScreenwriter());
-            stmt.setString(6, movie.getActor());
-            stmt.setString(7, movie.getType());
-            stmt.setString(8, movie.getArea());
-            stmt.setString(9, movie.getLanguage());
-            stmt.setString(10, movie.getShowTime());
-            stmt.setString(11, ""+movie.getRuntime());
-            stmt.setString(12, ""+movie.getScore());
-            stmt.setString(13, ""+movie.getPeople());
-            stmt.setString(14, movie.getSummary());
-            stmt.execute();  
-            JDBCUtil.closeConn(conn);
+        	PreparedStatement serachStmt=conn.prepareStatement(searchSql.toString()); 
+        	serachStmt.setString(1, movie.getMid());
+        	ResultSet rs = serachStmt.executeQuery(); 
+        	if (rs.next()){
+        		 PreparedStatement updateStmt=conn.prepareStatement(updateSql.toString()); 
+        		 updateStmt.setString(1, ""+movie.getScore());
+        		 updateStmt.setString(2, ""+movie.getPeople());
+        		 updateStmt.setString(3, movie.getMid());
+        		 updateStmt.execute();  
+        	} else {
+        		 PreparedStatement stmt=conn.prepareStatement(sql.toString()); 
+                 stmt.setString(1, movie.getMid());
+                 stmt.setString(2, movie.getPicUrl());
+                 stmt.setString(3, movie.getName());
+                 stmt.setString(4, movie.getDirector());
+                 stmt.setString(5, movie.getScreenwriter());
+                 stmt.setString(6, movie.getActor());
+                 stmt.setString(7, movie.getType());
+                 stmt.setString(8, movie.getArea());
+                 stmt.setString(9, movie.getLanguage());
+                 stmt.setString(10, movie.getShowTime());
+                 stmt.setString(11, ""+movie.getRuntime());
+                 stmt.setString(12, ""+movie.getScore());
+                 stmt.setString(13, ""+movie.getPeople());
+                 stmt.setString(14, movie.getSummary());
+                 stmt.execute();  
+        	}
+        	 
         } catch (SQLException e) {  
             e.printStackTrace();  
-            JDBCUtil.closeConn(conn);
-        }  
+        }  finally {
+        	JDBCUtil.closeConn(conn);
+        }
 	}
+	
+//	public void saveMovie(Movie movie){
+//	  String mid = movie.getMid();
+//      String picUrl = movie.getPicUrl();
+//      String name = movie.getName();
+//      String director = movie.getDirector();
+//      String screenwriter = movie.getScreenwriter();
+//      String actor = movie.getActor();
+//      String type = movie.getType();
+//      String area = movie.getArea();
+//      String language = movie.getLanguage();
+//      String showTime = movie.getShowTime();
+//      String runtime = ""+movie.getRuntime();
+//      String score = ""+movie.getScore();
+//      String people = ""+movie.getPeople();
+//      String summary = movie.getSummary();
+//      
+//      String sql = "select * from movie where mid = ?";
+//      String insertSql = "insert into movie (mid, picUrl, name, director, screenwriter, actor, type, area, language, showTime, runtime, score, people, summary) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+//      String updateSql = "update movie set score = ?, people = ? where mid = ?";
+//      List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql, mid);
+//      if (list.size() == 0 || list == null){
+//    	  this.jdbcTemplate.update(insertSql, mid, picUrl, name, director, screenwriter, actor, type, area, language, showTime, runtime, score, people, summary);
+//      } else {
+//    	  this.jdbcTemplate.update(updateSql, score, people); //已存在的更新评分、参评人数。
+//    	  System.out.println("更新成功");
+//      }
+//	}
+//	
+//	public void saveBrief(Brief brief){
+//		String uname = brief.getUname();
+//		String mid = brief.getMid();
+//		String name = brief.getName();
+//		Double score = brief.getScore();
+//		String comment = brief.getComment();
+//		String commentTime = brief.getCommentTime();
+//		
+//		String sql = "select * from brief where uname = ? and mid = ?";
+//		String insertSql = "insert into brief (uname, mid, name, score, comment, commentTime) values(?,?,?,?,?,?)";
+//		List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql, uname, mid);
+//		if (list.size() == 0 || list == null){
+//			this.jdbcTemplate.update(insertSql, uname, mid, name, score, comment, commentTime);
+//		} else {
+//			
+//		}
+//	}
 
 	public List<Map<String, Object>> loadPopularList(Integer start, Integer count) {
 		String sql = "select * from movie order by showTime desc limit ?,?";
@@ -203,8 +265,16 @@ public class MovieDao {
 	}
 
 	public void addIntoTestMovie(String type, String testStr) {
-		String sql = "insert into testMovie (type, list) values(?,?)";
-		this.jdbcTemplate.update(sql, type, testStr);
+		String insertSql = "insert into testMovie (type, list) values(?,?)";
+		String updateSql = "update testMovie set list = ? where type = ?";
+		String sql = "select * from testMovie where type = ?";
+		List<Map<String, Object>> list = this.jdbcTemplate.queryForList(sql, type);
+		if (list.size() == 0 || list == null){
+			this.jdbcTemplate.update(insertSql, type, testStr);
+		} else {
+			this.jdbcTemplate.update(updateSql, testStr, type);
+		}
+		
 	}
 
 	public String getTestMovieListFastByType(String type) {
@@ -233,7 +303,7 @@ public class MovieDao {
 	}
 
 	public List<Map<String, Object>> getHistoryByUname(String uname) {
-		String sql = "select * from history where uname = ? order by createTimeStamp desc limit 50";
+		String sql = "select * from history where uname = ? order by createTimeStamp desc limit 100";
 		return this.jdbcTemplate.queryForList(sql, uname);
 	}
 

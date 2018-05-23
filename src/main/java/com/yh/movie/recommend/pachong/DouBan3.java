@@ -10,6 +10,7 @@ import com.yh.movie.recommend.dao.MovieDao;
 import com.yh.movie.recommend.dao.BriefDao;
 import com.yh.movie.recommend.entity.Brief;
 import com.yh.movie.recommend.entity.Movie;
+
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -21,12 +22,12 @@ import us.codecraft.webmagic.processor.PageProcessor;
  */
 public class DouBan3 implements PageProcessor {
 	// 抓取网站的相关配置，包括：编码、抓取间隔、重试次数等
-	private Site site = Site.me().setRetryTimes(3).setSleepTime(4000);
-	
+	private static Site site = Site.me().setRetryTimes(3).setSleepTime(5000);
 	private static int num = 1;
+	private static ProxyIP proxyIP = new ProxyIP();
 	private static int commentNum = 1;
-	private MovieDao movieDao = new MovieDao();
-	private BriefDao briefDao = new BriefDao();
+	private static MovieDao movieDao = new MovieDao();
+	private static BriefDao briefDao = new BriefDao();
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	/**
@@ -100,6 +101,21 @@ public class DouBan3 implements PageProcessor {
 
 			page.addTargetRequests(page.getHtml().xpath("//*[@id='recommendations']/div/dl/dd/a/@href").all());
 			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?status=P");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=20&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=40&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=60&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=80&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=100&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=120&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=140&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=160&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=180&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=200&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=220&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=240&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=260&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=280&limit=20&sort=new_score&status=P&percent_type=");
+			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=300&limit=20&sort=new_score&status=P&percent_type=");
 			movieDao.saveMovie(movie);// 保存用户信息到数据库
 			System.out.println("num:" + num + " " + movie.toString());// 输出对象
 			num++;
@@ -143,11 +159,11 @@ public class DouBan3 implements PageProcessor {
 			}
 		} else {
 			page.addTargetRequests(page.getHtml()
-					.xpath("//*[@id='content']/div/div[2]/div[4]/div[3]/div/div[1]/div/div[2]/a/@href").all());
+					.xpath("//*[@id=\"screening\"]/div[2]/ul/li[@class=\"ui-slide-item\"]/ul/li/a/@href").all());
 		}
-		
+//*[@id='content']/div/div[2]/div[4]/div[3]/div/div[1]/div/div[2]/a/@href
 		try {
-			new ProxyIP().getProxy();
+			proxyIP.getProxy();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -158,9 +174,9 @@ public class DouBan3 implements PageProcessor {
 	public Site getSite() {
 		return this.site;
 	}
-	public static void main(String[] args) {
+	public static void startSpider() {
 		try {
-			new ProxyIP().getProxy();
+			proxyIP.getProxy();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -168,7 +184,7 @@ public class DouBan3 implements PageProcessor {
 		long startTime, endTime;
 		System.out.println("========电影信息小爬虫【启动】喽！=========");
 		startTime = new Date().getTime();
-		Spider.create(new DouBan3()).addUrl("https://movie.douban.com/subject/26630781/?from=subject-page").thread(5).run();
+		Spider.create(new DouBan3()).addUrl("https://movie.douban.com/").thread(4).run();
 		endTime = new Date().getTime();
 		System.out.println("========电影信息小爬虫【结束】喽！========="+sdf.format(endTime));
 		System.out.println("一共爬到" + num + "部电影信息、" + commentNum + "评论,用时为：" + (endTime - startTime) / 1000 + "s");

@@ -1,5 +1,7 @@
 package com.yh.movie.recommend.service;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -155,7 +157,7 @@ public class MovieService {
 		List<Integer> midList = new ArrayList<Integer>(); // 区分度最高的电影mid列表
 		List<String> userList = new ArrayList<String>(); // 获得最活跃的 i名用户名称列表
 		CountDownLatch cdl = new CountDownLatch(typeList.size()); //CountDownLatch计数器保证所有线程执行完毕后继续
-		List<Map<String, Object>> activeList = this.movieDao.getActiveUname(50);
+		List<Map<String, Object>> activeList = this.movieDao.getActiveUname(500);
 		for (Map<String, Object> map : activeList) {
 			userList.add(map.get("uname").toString());
 		}
@@ -382,6 +384,8 @@ public class MovieService {
 		try {
 			CsvUtil.calculateUserCF(csvFilePath, uname, midList);
 			CsvUtil.calculateItemCF(csvFilePath, uname, midList);
+			System.out.println("-----------" + csvFilePath);
+//			java.nio.file.Files.delete(Paths.get(csvFilePath));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

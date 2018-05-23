@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.yh.movie.recommend.pachong.DouBan3;
 import com.yh.movie.recommend.service.MovieService;
+import com.yh.movie.recommend.task.MovieTask;
 
 import static com.yh.movie.recommend.util.JsonHelper.jsonEntity;
 
@@ -306,6 +308,16 @@ public class MovieController {
 		result.put("code", 100);
 		result.put("msg", "推荐成功");
 		result.put("subjects", this.movieService.recommendToIsOld(uname));
+		return jsonEntity(result);
+	}
+	
+	@RequestMapping(value = "test.do")
+	public ResponseEntity<String> test(){
+		System.out.println("test");
+		new DouBan3().startSpider();
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("code", 100);
+		result.put("msg", "推荐成功");
 		return jsonEntity(result);
 	}
 	

@@ -82,7 +82,7 @@ public class TestMovieListThread extends Thread{
 		try {
 			List<Integer> testList = new ArrayList<Integer>();
 			Map<Integer, Double> midToVarianceMap = new HashMap<Integer, Double>(); //<mid,方差>
-			List<Map<String, Object>> movieList = this.movieDao.getAllMovieByType(type, 500);
+			List<Map<String, Object>> movieList = this.movieDao.getAllMovieByType(type, 1000);
 			for (Map<String, Object> map : movieList) {
 				Integer mid = (Integer)map.get("mid");
 				List<Double> scoreList = new ArrayList<Double>();
