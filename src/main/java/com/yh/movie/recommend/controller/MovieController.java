@@ -105,7 +105,7 @@ public class MovieController {
 	}
 	
 	/**
-	 * 决策出所属类型且区分度最大电影,没有作定时任务处理
+	 * 决策出所属类型且区分度最大电影,作定时任务处理
 	 * @param chooseData
 	 * @param uname
 	 * @return

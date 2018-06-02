@@ -28,8 +28,10 @@ public class CsvUtil {
 
 	public static String writeCSV(List<Map<String, Object>> list) {
 		MemoryIDMigrator thingToLong = new MemoryIDMigrator();  //mahout封装的方法将字符串加密成唯一long
-		String csvFilePath = "D://csvData/" + System.currentTimeMillis()
+		String csvFilePath = "/csvData/" + System.currentTimeMillis()
 				+ ".csv";
+//		String csvFilePath = "D://csvData/" + System.currentTimeMillis()
+//				+ ".csv";
 		try {
 			// 创建CSV写对象 例如:CsvWriter(文件路径，分隔符，编码格式);
 			CsvWriter csvWriter = new CsvWriter(csvFilePath, ',',

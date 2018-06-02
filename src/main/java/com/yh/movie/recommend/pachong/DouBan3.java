@@ -99,23 +99,25 @@ public class DouBan3 implements PageProcessor {
 			movie.setPeople(people);
 			movie.setSummary(summary.toString().substring(1,summary.toString().length()-1).trim());
 
-			page.addTargetRequests(page.getHtml().xpath("//*[@id='recommendations']/div/dl/dd/a/@href").all());
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?status=P");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=20&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=40&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=60&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=80&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=100&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=120&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=140&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=160&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=180&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=200&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=220&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=240&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=260&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=280&limit=20&sort=new_score&status=P&percent_type=");
-			page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=300&limit=20&sort=new_score&status=P&percent_type=");
+			if(commentNum < 1000){
+				page.addTargetRequests(page.getHtml().xpath("//*[@id='recommendations']/div/dl/dd/a/@href").all());
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?status=P");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=20&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=40&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=60&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=80&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=100&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=120&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=140&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=160&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=180&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=200&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=220&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=240&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=260&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=280&limit=20&sort=new_score&status=P&percent_type=");
+				page.addTargetRequest("https://movie.douban.com/subject/" + mid + "/comments?start=300&limit=20&sort=new_score&status=P&percent_type=");
+			}
 			movieDao.saveMovie(movie);// 保存用户信息到数据库
 			System.out.println("num:" + num + " " + movie.toString());// 输出对象
 			num++;
@@ -158,8 +160,10 @@ public class DouBan3 implements PageProcessor {
 				commentNum ++;
 			}
 		} else {
-			page.addTargetRequests(page.getHtml()
+			if(commentNum < 1000){
+				page.addTargetRequests(page.getHtml()
 					.xpath("//*[@id=\"screening\"]/div[2]/ul/li[@class=\"ui-slide-item\"]/ul/li/a/@href").all());
+			}
 		}
 //*[@id='content']/div/div[2]/div[4]/div[3]/div/div[1]/div/div[2]/a/@href
 		try {
@@ -168,6 +172,7 @@ public class DouBan3 implements PageProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 	@Override
